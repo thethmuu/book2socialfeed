@@ -1,3 +1,6 @@
 /venv
-output.json
+
+# input and output files
 input.pdf
+output.json
+output.html
