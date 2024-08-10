@@ -1,0 +1,2 @@
+PyPDF2==3.0.1
+typing_extensions==4.12.2
