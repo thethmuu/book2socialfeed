@@ -1,6 +1,7 @@
 import PyPDF2
 import json
 import os
+from tqdm import tqdm
 
 def extract_pdf_to_json(pdf_path, output_json_path, skip_pages=1, chunk_size=50):
     content = []
@@ -9,20 +10,25 @@ def extract_pdf_to_json(pdf_path, output_json_path, skip_pages=1, chunk_size=50)
 
     with open(pdf_path, 'rb') as file:
         reader = PyPDF2.PdfReader(file)
-        for page_num in range(skip_pages, len(reader.pages)):
-            page = reader.pages[page_num]
-            text = page.extract_text()
-            words = text.split()
-            
-            for word in words:
-                current_chunk.append(word)
-                word_count += 1
+        total_pages = len(reader.pages)
+        
+        with tqdm(total=total_pages - skip_pages, desc="Processing PDF", unit="page") as pbar:
+            for page_num in range(skip_pages, total_pages):
+                page = reader.pages[page_num]
+                text = page.extract_text()
+                words = text.split()
                 
-                if word_count >= chunk_size:
-                    chunk_text = ' '.join(current_chunk)
-                    content.append(chunk_text)
-                    current_chunk = []
-                    word_count = 0
+                for word in words:
+                    current_chunk.append(word)
+                    word_count += 1
+                    
+                    if word_count >= chunk_size:
+                        chunk_text = ' '.join(current_chunk)
+                        content.append(chunk_text)
+                        current_chunk = []
+                        word_count = 0
+                
+                pbar.update(1)
 
     # Add any remaining content
     if current_chunk:
@@ -55,7 +61,7 @@ def save_as_html(chunks):
     
     for i, chunk in enumerate(chunks, 1):
         html_content += f"""
-            <article class="bg-white rounded-lg shadow-md mb-6 p-4">
+            <article class="bg-white rounded-lg shadow-md mb-4 p-4">
                 <div class="flex items-center mb-4">
                     <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
                     <div>
@@ -90,8 +96,17 @@ def save_as_html(chunks):
     with open("output.html", "w", encoding="utf-8") as f:
         f.write(html_content)
 
+def get_first_pdf_file():
+    pdf_files = [f for f in os.listdir('.') if f.lower().endswith('.pdf')]
+    return pdf_files[0] if pdf_files else None
+
 def main():
-    pdf_filename = input("Enter the PDF filename: ")
+    default_pdf = get_first_pdf_file()
+    if default_pdf:
+        pdf_filename = input(f"Enter the PDF filename (default: {default_pdf}): ") or default_pdf
+    else:
+        pdf_filename = input("Enter the PDF filename: ")
+    
     output_filename = "output.json"  # Fixed output filename
 
     skip_pages = int(input("Enter the number of pages to skip (default 1): ") or "1")
