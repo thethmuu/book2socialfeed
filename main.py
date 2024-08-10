@@ -44,23 +44,45 @@ def save_as_html(chunks):
         <title>Book2SocialFeed Output</title>
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
-    <body class="bg-gray-100 p-8">
-        <div class="max-w-3xl mx-auto">
-            <h1 class="text-3xl font-bold mb-6 text-center text-blue-600">Book2SocialFeed Output</h1>
-            <div class="space-y-4">
+    <body class="bg-gray-100">
+        <header class="bg-blue-600 text-white p-4 shadow-md">
+            <div class="max-w-3xl mx-auto flex items-center">
+                <h1 class="text-2xl font-bold">Book2SocialFeed</h1>
+            </div>
+        </header>
+        <main class="max-w-3xl mx-auto mt-6 pb-16">
     """
     
     for i, chunk in enumerate(chunks, 1):
         html_content += f"""
-                <div class="bg-white p-4 rounded-lg shadow">
-                    <h2 class="text-xl font-semibold mb-2 text-gray-700">Chunk {i}</h2>
-                    <p class="text-gray-600">{chunk}</p>
+            <article class="bg-white rounded-lg shadow-md mb-6 p-4">
+                <div class="flex items-center mb-4">
+                    <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                    <div>
+                        <h3 class="font-semibold">Book Excerpt</h3>
+                        <p class="text-gray-500 text-sm">Posted just now</p>
+                    </div>
                 </div>
+                <p class="text-gray-800 mb-4">{chunk}</p>
+                <div class="flex items-center text-gray-500 text-sm">
+                    <button class="flex items-center mr-4">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg>
+                        Like
+                    </button>
+                    <button class="flex items-center mr-4">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                        Comment
+                    </button>
+                    <button class="flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                        Share
+                    </button>
+                </div>
+            </article>
         """
     
     html_content += """
-            </div>
-        </div>
+        </main>
     </body>
     </html>
     """
