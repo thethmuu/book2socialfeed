@@ -8,12 +8,12 @@ This Python script extracts text from PDF files, splits it into chunks, and save
 - Splits text into manageable chunks 🧩
 - Creates JSON output with an array of text chunks 📊
 - Generates an HTML file with styled output using Tailwind CSS 🎨
-  
+
 ## Roadmap 🛣️
 
 - [ ] Add a web interface to the script.
 - [ ] Accept input file from front-end UI.
-- [ ] Update to use OpenAI's GPT or its equivalent to create more intelligent chunks and social media-friendly content.
+- [ ] Update to use OpenAI's GPT, Gemini or their equivalent to create more intelligent chunks and social media-friendly content.
 - [ ] Serve the dynamic output file via a web server instead of generating a local file.
 
 ## Requirements 🛠️
@@ -25,29 +25,29 @@ This Python script extracts text from PDF files, splits it into chunks, and save
 
 1. Clone this repository:
 
-```bash
-   git clone https://github.com/thethmuu/book2socialfeed.git
-```
+   ```bash
+      git clone https://github.com/thethmuu/book2socialfeed.git
+   ```
 
 2. Navigate to the project directory:
 
-```bash
-   cd book2socialfeed
-```
+   ```bash
+      cd book2socialfeed
+   ```
 
 3. Install the required packages:
 
-```bash
+   ```bash
    pip install -r requirements.txt
-```
+   ```
 
 ## Usage 🖥️
 
 1. Run the script:
 
-```bash
-   python main.py
-```
+   ```bash
+      python main.py
+   ```
 
 2. Follow the prompts to enter:
 
