@@ -1,7 +1,7 @@
 import PyPDF2
 import json
-import os
 from tqdm import tqdm
+from PyQt5.QtWidgets import QApplication, QFileDialog
 
 def extract_pdf_to_json(pdf_path, output_json_path, skip_pages=1, chunk_size=50):
     content = []
@@ -30,7 +30,6 @@ def extract_pdf_to_json(pdf_path, output_json_path, skip_pages=1, chunk_size=50)
                 
                 pbar.update(1)
 
-    # Add any remaining content
     if current_chunk:
         chunk_text = ' '.join(current_chunk)
         content.append(chunk_text)
@@ -38,10 +37,11 @@ def extract_pdf_to_json(pdf_path, output_json_path, skip_pages=1, chunk_size=50)
     with open(output_json_path, 'w', encoding='utf-8') as json_file:
         json.dump(content, json_file, ensure_ascii=False, indent=4)
     
-    return content  # Return the list of chunks
+    return content
 
 def save_as_html(chunks):
-    html_content = """
+    chunk_count = len(chunks)
+    html_content = f"""
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -50,10 +50,11 @@ def save_as_html(chunks):
         <title>Book2SocialFeed Output</title>
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
-    <body class="bg-gray-100">
-        <header class="bg-blue-600 text-white p-4 shadow-md">
-            <div class="max-w-3xl mx-auto flex items-center">
+    <body class="bg-gray-50 font-sans">
+        <header class="bg-emerald-600 text-white p-4 shadow-md">
+            <div class="max-w-3xl mx-auto flex items-center justify-between">
                 <h1 class="text-2xl font-bold">Book2SocialFeed</h1>
+                <p class="text-white">Total Chunks: {chunk_count}</p>
             </div>
         </header>
         <main class="max-w-3xl mx-auto mt-6 pb-16">
@@ -96,18 +97,19 @@ def save_as_html(chunks):
     with open("output.html", "w", encoding="utf-8") as f:
         f.write(html_content)
 
-def get_first_pdf_file():
-    pdf_files = [f for f in os.listdir('.') if f.lower().endswith('.pdf')]
-    return pdf_files[0] if pdf_files else None
+def get_pdf_file_from_dialog():
+    app = QApplication([])  
+    options = QFileDialog.Options()
+    filename, _ = QFileDialog.getOpenFileName(None, "Select PDF File", "", "PDF Files (*.pdf);;All Files (*)", options=options)
+    return filename if filename else None
 
 def main():
-    default_pdf = get_first_pdf_file()
-    if default_pdf:
-        pdf_filename = input(f"Enter the PDF filename (default: {default_pdf}): ") or default_pdf
-    else:
-        pdf_filename = input("Enter the PDF filename: ")
+    pdf_filename = get_pdf_file_from_dialog()  
+    if not pdf_filename:
+        print("No file selected. Exiting.")
+        return
     
-    output_filename = "output.json"  # Fixed output filename
+    output_filename = "output.json"  
 
     skip_pages = int(input("Enter the number of pages to skip (default 1): ") or "1")
     chunk_size = int(input("Enter the chunk size (default 50): ") or "50")

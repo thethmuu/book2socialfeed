@@ -1,6 +1,5 @@
 /venv
 
-# input and output files
-input.pdf
+output files
 output.json
 output.html
