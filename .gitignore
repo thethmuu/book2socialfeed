@@ -1,5 +1,4 @@
 /venv
 
-output files
-output.json
-output.html
+output file
+*.html

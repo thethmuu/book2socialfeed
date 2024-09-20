@@ -55,12 +55,12 @@ This Python script extracts text from PDF files, splits it into chunks, and save
 
 3. The script generates:
    - `output.json`: Extracted text chunks
-   - `output.html`: Basic styled representation of the chunks
+   - `{input_filename}_output.html`: Basic styled representation of the chunks, where `{input_filename}` is the name of the PDF file (truncated to 20 characters if necessary).
 
 ## Output 📊
 
 - `output.json` contains an array of text chunks.
-- `output.html` displays the text chunks in a simple format.
+- `{input_filename}_output.html` displays the text chunks in a simple format, named after the input PDF file for easier identification.
 
 ## Customization ⚙️
 

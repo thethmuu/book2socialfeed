@@ -4,7 +4,7 @@ from tqdm import tqdm
 from PyQt5.QtWidgets import QApplication, QFileDialog
 
 
-def extract_pdf_to_json(pdf_path, output_json_path, skip_pages=1, chunk_size=50):
+def extract_pdf_to_json(pdf_path, skip_pages=1, chunk_size=50):
     content = []
     current_chunk = []
     word_count = 0
@@ -37,13 +37,10 @@ def extract_pdf_to_json(pdf_path, output_json_path, skip_pages=1, chunk_size=50)
         chunk_text = " ".join(current_chunk)
         content.append(chunk_text)
 
-    with open(output_json_path, "w", encoding="utf-8") as json_file:
-        json.dump(content, json_file, ensure_ascii=False, indent=4)
-
     return content
 
 
-def save_as_html(chunks):
+def save_as_html(chunks, html_output_filename):
     chunk_count = len(chunks)
     content = ""
 
@@ -85,7 +82,7 @@ def save_as_html(chunks):
     )
 
     # Write the final HTML to output html
-    with open("output.html", "w", encoding="utf-8") as f:
+    with open(html_output_filename, "w", encoding="utf-8") as f:
         f.write(final_html)
         print("final", final_html)
 
@@ -105,18 +102,23 @@ def main():
         print("No file selected. Exiting.")
         return
 
-    output_filename = "output.json"
+    base_name = pdf_filename.split("/")[-1].split(".")[0]
+    truncated_name = base_name[:20]
+    html_output_filename = f"{truncated_name}.html"
+
+    # Set localStorage key with the start keyword of the file name
+    local_storage_key = f"{truncated_name}-progress"
 
     skip_pages = int(input("Enter the number of pages to skip (default 1): ") or "1")
     chunk_size = int(input("Enter the chunk size (default 50): ") or "50")
 
-    chunks = extract_pdf_to_json(pdf_filename, output_filename, skip_pages, chunk_size)
-    save_as_html(chunks)
+    chunks = extract_pdf_to_json(pdf_filename, skip_pages, chunk_size)
+    save_as_html(chunks, html_output_filename)
 
     print(
-        f"Processed {pdf_filename} into {len(chunks)} chunks. Output saved to {output_filename} and output.html"
+        f"Processed {pdf_filename} into {len(chunks)} chunks. Output saved to {html_output_filename}"
     )
-
+    print(f"LocalStorage key set: {local_storage_key}")
 
 if __name__ == "__main__":
     main()
