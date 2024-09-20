@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book2SocialFeed Output</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="text-gray-600">
+    <header class="bg-emerald-600 text-white p-4 shadow-md">
+      <div class="max-w-3xl mx-auto flex items-center">
+        <h1 class="text-2xl font-bold">Book2SocialFeed</h1>
+        <p class="text-white">Total Chunks: {chunk_count}</p>
+      </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto mt-6 pb-16">{content}</main>
+
+    <script>
+      function getScrollPercentage() {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        const scrollHeight =
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight;
+        return ((scrollTop / scrollHeight) * 100).toFixed(2);
+      }
+
+      function scrollToPercentage(percentage) {
+        const scrollHeight =
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight;
+        const targetPosition = (percentage / 100) * scrollHeight;
+        window.scrollTo(0, targetPosition);
+      }
+
+      window.addEventListener("scroll", () => {
+        const percentage = getScrollPercentage();
+        localStorage.setItem("progress", percentage);
+        console.log(`Scroll progress: ${percentage}%`);
+      });
+
+      window.addEventListener("load", () => {
+        const savedProgress = localStorage.getItem("progress");
+        if (savedProgress) {
+          console.log(`Saved progress: ${savedProgress}%`);
+
+          setTimeout(() => {
+            scrollToPercentage(parseFloat(savedProgress));
+          }, 100);
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -3,65 +3,52 @@ import json
 from tqdm import tqdm
 from PyQt5.QtWidgets import QApplication, QFileDialog
 
+
 def extract_pdf_to_json(pdf_path, output_json_path, skip_pages=1, chunk_size=50):
     content = []
     current_chunk = []
     word_count = 0
 
-    with open(pdf_path, 'rb') as file:
+    with open(pdf_path, "rb") as file:
         reader = PyPDF2.PdfReader(file)
         total_pages = len(reader.pages)
-        
-        with tqdm(total=total_pages - skip_pages, desc="Processing PDF", unit="page") as pbar:
+
+        with tqdm(
+            total=total_pages - skip_pages, desc="Processing PDF", unit="page"
+        ) as pbar:
             for page_num in range(skip_pages, total_pages):
                 page = reader.pages[page_num]
                 text = page.extract_text()
                 words = text.split()
-                
+
                 for word in words:
                     current_chunk.append(word)
                     word_count += 1
-                    
+
                     if word_count >= chunk_size:
-                        chunk_text = ' '.join(current_chunk)
+                        chunk_text = " ".join(current_chunk)
                         content.append(chunk_text)
                         current_chunk = []
                         word_count = 0
-                
+
                 pbar.update(1)
 
     if current_chunk:
-        chunk_text = ' '.join(current_chunk)
+        chunk_text = " ".join(current_chunk)
         content.append(chunk_text)
 
-    with open(output_json_path, 'w', encoding='utf-8') as json_file:
+    with open(output_json_path, "w", encoding="utf-8") as json_file:
         json.dump(content, json_file, ensure_ascii=False, indent=4)
-    
+
     return content
+
 
 def save_as_html(chunks):
     chunk_count = len(chunks)
-    html_content = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Book2SocialFeed Output</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="bg-gray-50 font-sans">
-        <header class="bg-emerald-600 text-white p-4 shadow-md">
-            <div class="max-w-3xl mx-auto flex items-center justify-between">
-                <h1 class="text-2xl font-bold">Book2SocialFeed</h1>
-                <p class="text-white">Total Chunks: {chunk_count}</p>
-            </div>
-        </header>
-        <main class="max-w-3xl mx-auto mt-6 pb-16">
-    """
-    
-    for i, chunk in enumerate(chunks, 1):
-        html_content += f"""
+    content = ""
+
+    for chunk in chunks:
+        content += f"""
             <article class="bg-white rounded-lg shadow-md mb-4 p-4">
                 <div class="flex items-center mb-4">
                     <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
@@ -87,37 +74,49 @@ def save_as_html(chunks):
                 </div>
             </article>
         """
-    
-    html_content += """
-        </main>
-    </body>
-    </html>
-    """
-    
+
+    # Read the template file
+    with open("template.html", "r", encoding="utf-8") as template_file:
+        template_content = template_file.read()
+
+    # Replace placeholders
+    final_html = template_content.replace("{chunk_count}", str(chunk_count)).replace(
+        "{content}", content
+    )
+
+    # Write the final HTML to output html
     with open("output.html", "w", encoding="utf-8") as f:
-        f.write(html_content)
+        f.write(final_html)
+        print("final", final_html)
+
 
 def get_pdf_file_from_dialog():
-    app = QApplication([])  
+    app = QApplication([])
     options = QFileDialog.Options()
-    filename, _ = QFileDialog.getOpenFileName(None, "Select PDF File", "", "PDF Files (*.pdf);;All Files (*)", options=options)
+    filename, _ = QFileDialog.getOpenFileName(
+        None, "Select PDF File", "", "PDF Files (*.pdf);;All Files (*)", options=options
+    )
     return filename if filename else None
 
+
 def main():
-    pdf_filename = get_pdf_file_from_dialog()  
+    pdf_filename = get_pdf_file_from_dialog()
     if not pdf_filename:
         print("No file selected. Exiting.")
         return
-    
-    output_filename = "output.json"  
+
+    output_filename = "output.json"
 
     skip_pages = int(input("Enter the number of pages to skip (default 1): ") or "1")
     chunk_size = int(input("Enter the chunk size (default 50): ") or "50")
 
     chunks = extract_pdf_to_json(pdf_filename, output_filename, skip_pages, chunk_size)
     save_as_html(chunks)
-    
-    print(f"Processed {pdf_filename} into {len(chunks)} chunks. Output saved to {output_filename} and output.html")
+
+    print(
+        f"Processed {pdf_filename} into {len(chunks)} chunks. Output saved to {output_filename} and output.html"
+    )
+
 
 if __name__ == "__main__":
     main()
